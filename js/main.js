@@ -25,6 +25,11 @@ const config = {
 const game = new Phaser.Game(config);
 
 let scoreText;
+let claw;
+let clawArmLeft;
+let clawArmRight;
+let clawLine;
+let isMoving = false;
 
 function preload(){
 
