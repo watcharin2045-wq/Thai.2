@@ -1,38 +1,280 @@
 const config = {
+
     type: Phaser.AUTO,
+
     width: 1280,
+
     height: 720,
+
     parent: "game",
+
     backgroundColor: "#9EDFFF",
+
     scene: {
+
         preload,
+
         create,
+
         update
+
     }
+
 };
 
-new Phaser.Game(config);
+const game = new Phaser.Game(config);
 
-function preload() {
-}
+let scoreText;
 
-function create() {
-
-    this.add.text(430, 30, "🎮 ตู้คีบคำศัพท์", {
-        fontSize: "42px",
-        color: "#000",
-        fontStyle: "bold"
-    });
-
-    this.add.rectangle(640, 330, 700, 420, 0xffffff)
-        .setStrokeStyle(8, 0xdddddd);
-
-    this.add.text(560, 300, "Version 3", {
-        fontSize: "36px",
-        color: "#1565c0"
-    });
+function preload(){
 
 }
 
-function update() {
+function create(){
+
+    //==========================
+    // พื้นหลัง
+    //==========================
+
+    this.add.rectangle(
+        640,
+        360,
+        1280,
+        720,
+        0x9EDFFF
+    );
+
+    //==========================
+    // หัวเกม
+    //==========================
+
+    this.add.text(
+
+        40,
+
+        30,
+
+        "🎮 ตู้คีบคำศัพท์",
+
+        {
+
+            fontSize:"38px",
+
+            fontStyle:"bold",
+
+            color:"#000"
+
+        }
+
+    );
+
+    scoreText=this.add.text(
+
+        1120,
+
+        30,
+
+        "⭐ 0",
+
+        {
+
+            fontSize:"32px",
+
+            color:"#000"
+
+        }
+
+    );
+
+    this.add.text(
+
+        1120,
+
+        70,
+
+        "❤️❤️❤️",
+
+        {
+
+            fontSize:"26px"
+
+        }
+
+    );
+
+
+
+    //==========================
+    // ตัวตู้
+    //==========================
+
+    const machine=this.add.container(640,360);
+
+
+
+
+    machine.add(
+
+        this.add.rectangle(
+
+            0,
+
+            0,
+
+            720,
+
+            520,
+
+            0xffffff
+
+        )
+
+    );
+
+
+
+    machine.add(
+
+        this.add.rectangle(
+
+            0,
+
+            0,
+
+            690,
+
+            490,
+
+            0xdff4ff
+
+        )
+
+    );
+
+
+
+    // ฐานล่าง
+
+    machine.add(
+
+        this.add.rectangle(
+
+            0,
+
+            285,
+
+            720,
+
+            40,
+
+            0x666666
+
+        )
+
+    );
+
+
+
+    // คำอธิบาย
+
+    this.add.text(
+
+        520,
+
+        650,
+
+        "กดปุ่ม SPACE เพื่อเริ่มเกม",
+
+        {
+
+            fontSize:"28px",
+
+            color:"#000"
+
+        }
+
+    );
+
+
+
+    //==========================
+    // ไฟ LED รอบตู้
+    //==========================
+
+    for(let i=0;i<18;i++){
+
+        this.add.circle(
+
+            290+i*40,
+
+            100,
+
+            8,
+
+            0xffff00
+
+        );
+
+    }
+
+
+
+    for(let i=0;i<18;i++){
+
+        this.add.circle(
+
+            290+i*40,
+
+            620,
+
+            8,
+
+            0xff6699
+
+        );
+
+    }
+
+
+
+    for(let i=0;i<12;i++){
+
+        this.add.circle(
+
+            290,
+
+            140+i*40,
+
+            8,
+
+            0x66ff66
+
+        );
+
+    }
+
+
+
+    for(let i=0;i<12;i++){
+
+        this.add.circle(
+
+            990,
+
+            140+i*40,
+
+            8,
+
+            0x66ccff
+
+        );
+
+    }
+
+
+
+}
+
+function update(){
+
 }
