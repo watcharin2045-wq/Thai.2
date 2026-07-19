@@ -1,0 +1,1 @@
+const words=['กา','ตา','ปลา','แมว','บ้าน'];document.getElementById('start').onclick=()=>{const w=words[Math.floor(Math.random()*words.length)];document.getElementById('word').textContent=w; if('speechSynthesis'in window){let u=new SpeechSynthesisUtterance(w);u.lang='th-TH';speechSynthesis.speak(u);}};
