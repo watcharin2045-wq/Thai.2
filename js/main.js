@@ -275,10 +275,47 @@ function create(){
         );
 
     }
+// =====================
+// แขนคีบ
+// =====================
 
+        clawLine = this.add.rectangle(
+            640,
+            150,
+            4,
+            120,
+            0x444444
+        );
 
+        claw = this.add.circle(
+            640,
+            210,
+            18,
+            0xcccccc
+        );
 
-}
+        clawArmLeft = this.add.line(
+            0,
+            0,
+            640,
+            210,
+            625,
+            240,
+            0x444444
+        );
+
+        clawArmRight = this.add.line(
+            0,
+            0,
+            640,
+            210,
+            655,
+            240,
+            0x444444
+        );
+    
+    
+    }
 
 function update(){
 
