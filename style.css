@@ -1,1 +1,19 @@
-body{font-family:sans-serif;background:linear-gradient(#aee6ff,#dff7ff);text-align:center;margin:0}.top{display:flex;justify-content:space-between;padding:15px 30px}.machine{width:90%;max-width:900px;height:420px;margin:auto;border:12px solid #fff;border-radius:30px;background:linear-gradient(#eef8ff,#cceeff)}.grid{display:grid;grid-template-columns:repeat(5,70px);gap:15px;justify-content:center;padding-top:170px}.capsule{width:70px;height:70px;border-radius:50%;background:#ffd54f;display:flex;align-items:center;justify-content:center}button{padding:15px 30px;border:none;border-radius:30px;font-size:20px;margin:10px}#word{font-size:60px;margin-top:20px}#claw{font-size:50px;padding-top:20px}
+body{
+
+margin:0;
+
+background:#87d7ff;
+
+overflow:hidden;
+
+font-family:Kanit;
+
+}
+
+canvas{
+
+display:block;
+
+margin:auto;
+
+}
