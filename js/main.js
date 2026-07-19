@@ -37,6 +37,17 @@ function preload(){
 
 function create(){
 
+    this.input.keyboard.on(
+
+        "keydown-SPACE",
+
+        ()=>{
+
+            moveClaw(this);
+
+        }
+
+    );
     //==========================
     // พื้นหลัง
     //==========================
@@ -316,6 +327,68 @@ function create(){
     
     
     }
+
+function moveClaw(scene){
+
+    if(isMoving) return;
+
+    isMoving = true;
+
+    scene.tweens.add({
+
+        targets:[
+            claw,
+            clawLine,
+            clawArmLeft,
+            clawArmRight
+        ],
+
+        y:"+=220",
+
+        duration:800,
+
+        ease:"Sine.easeInOut",
+
+        onComplete(){
+
+            scene.time.delayedCall(
+
+                300,
+
+                ()=>{
+
+                    scene.tweens.add({
+
+                        targets:[
+                            claw,
+                            clawLine,
+                            clawArmLeft,
+                            clawArmRight
+                        ],
+
+                        y:"-=220",
+
+                        duration:800,
+
+                        ease:"Sine.easeInOut",
+
+                        onComplete(){
+
+                            isMoving=false;
+
+                        }
+
+                    });
+
+                }
+
+            );
+
+        }
+
+    });
+
+}
 
 function update(){
 
