@@ -1,5 +1,3 @@
-import Claw from "../objects/Claw.js";
-import Capsule from "../objects/Capsule.js";
 export default class GameScene extends Phaser.Scene {
 
     constructor() {
@@ -8,119 +6,72 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
 
-        const colors=[
-
-0xffcc33,
-
-0xff6699,
-
-0x66ccff,
-
-0x66ff99,
-
-0xcc99ff
-
-];
-
-this.capsules=[];
-
-for(let i=0;i<20;i++){
-
-    const x=420+Math.random()*420;
-
-    const y=180+Math.random()*220;
-
-    const color=Phaser.Utils.Array.GetRandom(colors);
-
-    const c=new Capsule(
-
-        this,
-
-        x,
-
-        y,
-
-        color
-
-    );
-
-    this.capsules.push(c);
-
-}
-
-        
-        // =====================
-        // ลูกบอลแคปซูล
-        // =====================
-
-        const colors = [
-            0xffcc33,
-            0xff6699,
-            0x66ccff,
-            0x66ff99,
-            0xcc99ff
-        ];
-
-        this.capsules = [];
-
-        for(let row=0; row<4; row++){
-
-            for(let col=0; col<5; col++){
-
-                const x = 500 + col * 70;
-
-                const y = 260 + row * 70;
-
-                const color = Phaser.Utils.Array.GetRandom(colors);
-
-                const capsule = new Capsule(
-                    this,
-                    x,
-                    y,
-                    color
-                );
-
-                this.capsules.push(capsule);
-
-    }
-
-}
-        //==========================
-        // Background
-        //==========================
+        // =========================
+        // พื้นหลัง
+        // =========================
 
         this.cameras.main.setBackgroundColor("#9EDFFF");
 
-        //==========================
-        // Score
-        //==========================
+        // =========================
+        // หัวข้อเกม
+        // =========================
 
         this.add.text(
+            40,
+            20,
+            "🎮 ตู้คีบคำศัพท์",
+            {
+                fontSize: "40px",
+                fontStyle: "bold",
+                color: "#000000"
+            }
+        );
+
+        // =========================
+        // คะแนน
+        // =========================
+
+        this.score = 0;
+
+        this.scoreText = this.add.text(
             1080,
             20,
             "⭐ 0",
             {
                 fontSize: "30px",
-                color: "#000"
+                color: "#000000"
             }
         );
 
-        //==========================
-        // Cabinet Shadow
-        //==========================
+        // =========================
+        // ชีวิต
+        // =========================
+
+        this.add.text(
+            1080,
+            60,
+            "❤️❤️❤️",
+            {
+                fontSize: "24px"
+            }
+        );
+
+        // =========================
+        // เงาตู้
+        // =========================
 
         this.add.rectangle(
-            645,
-            365,
+            648,
+            366,
             730,
             530,
-            0x999999,
+            0x777777,
             0.25
         );
 
-        //==========================
-        // Cabinet
-        //==========================
+        // =========================
+        // ตัวตู้
+        // =========================
 
         this.add.rectangle(
             640,
@@ -130,130 +81,239 @@ for(let i=0;i<20;i++){
             0xffffff
         );
 
-        //==========================
-        // Glass
-        //==========================
+        // กระจก
 
         this.add.rectangle(
             640,
-            340,
+            325,
             680,
-            450,
-            0xdff6ff
+            430,
+            0xdff7ff
         );
 
-        //==========================
-        // Bottom Panel
-        //==========================
+        // ฐานเครื่อง
 
         this.add.rectangle(
             640,
-            575,
+            580,
             720,
-            90,
+            80,
             0x666666
         );
 
-        //==========================
-        // LED
-        //==========================
+        // =========================
+        // ไฟ LED ด้านบน
+        // =========================
 
         for(let i=0;i<18;i++){
 
             this.add.circle(
                 300+i*38,
-                110,
+                100,
                 6,
                 0xffee00
             );
 
         }
 
+        // ล่าง
+
         for(let i=0;i<18;i++){
 
             this.add.circle(
                 300+i*38,
-                610,
+                620,
                 6,
                 0xff66aa
             );
 
         }
 
+        // ซ้าย
+
         for(let i=0;i<12;i++){
 
             this.add.circle(
                 300,
-                150+i*38,
+                145+i*38,
                 6,
-                0x55ff55
+                0x66ff66
             );
 
         }
+
+        // ขวา
 
         for(let i=0;i<12;i++){
 
             this.add.circle(
                 980,
-                150+i*38,
+                145+i*38,
                 6,
-                0x55ccff
+                0x66ccff
             );
 
         }
 
-        //==========================
-        // Rope
-        //==========================
+        // =========================
+        // แขนคีบ
+        // =========================
 
-        this.add.rectangle(
+        this.rope=this.add.rectangle(
             640,
-            150,
+            140,
             4,
             120,
-            0x444444
+            0x333333
         );
 
-        //==========================
-        // Claw
-        //==========================
-
-        this.add.circle(
+        this.head=this.add.circle(
             640,
-            210,
+            200,
             18,
             0xdddddd
         );
 
-        this.add.line(
+        this.left=this.add.line(
             0,
             0,
             640,
-            210,
-            625,
-            240,
+            200,
+            620,
+            230,
             0x444444
         );
 
-        this.add.line(
+        this.right=this.add.line(
             0,
             0,
             640,
-            210,
-            655,
-            240,
+            200,
+            660,
+            230,
             0x444444
         );
+
+        // =========================
+        // ลูกบอล
+        // =========================
+
+        const colors=[
+            0xffcc33,
+            0xff6699,
+            0x66ccff,
+            0x66ff99,
+            0xcc99ff
+        ];
+
+        this.capsules=[];
+
+        for(let row=0;row<4;row++){
+
+            for(let col=0;col<5;col++){
+
+                const ball=this.add.circle(
+
+                    500+col*70,
+
+                    260+row*70,
+
+                    25,
+
+                    Phaser.Utils.Array.GetRandom(colors)
+
+                );
+
+                this.capsules.push(ball);
+
+            }
+
+        }
+
+        // =========================
+        // คำศัพท์
+        // =========================
+
+        this.wordText=this.add.text(
+
+            640,
+
+            665,
+
+            "ปลา",
+
+            {
+
+                fontSize:"42px",
+
+                fontStyle:"bold",
+
+                color:"#0D47A1"
+
+            }
+
+        ).setOrigin(0.5);
+
+        // =========================
+        // ปุ่ม Space
+        // =========================
 
         this.add.text(
-            500,
-            650,
-            "Version 3.2",
+
+            40,
+
+            675,
+
+            "กด SPACE เพื่อคีบ",
+
             {
-                fontSize:"28px",
+
+                fontSize:"26px",
+
                 color:"#000"
+
             }
+
         );
+
+        this.input.keyboard.on("keydown-SPACE",()=>{
+
+            this.moveClaw();
+
+        });
+
+    }
+
+    moveClaw(){
+
+        if(this.moving) return;
+
+        this.moving=true;
+
+        this.tweens.add({
+
+            targets:[
+                this.rope,
+                this.head,
+                this.left,
+                this.right
+            ],
+
+            y:"+=220",
+
+            duration:700,
+
+            yoyo:true,
+
+            ease:"Sine.easeInOut",
+
+            onComplete:()=>{
+
+                this.moving=false;
+
+            }
+
+        });
 
     }
 
