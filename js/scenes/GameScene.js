@@ -1,3 +1,4 @@
+import Capsule from "../objects/Capsule.js";
 export default class GameScene extends Phaser.Scene {
 
     constructor() {
