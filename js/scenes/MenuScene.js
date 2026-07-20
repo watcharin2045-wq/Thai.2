@@ -1,59 +1,43 @@
+export default class MenuScene extends Phaser.Scene {
 
-export default class MenuScene extends Phaser.Scene{
-
-    constructor(){
-
+    constructor() {
         super("MenuScene");
-
     }
 
-    create(){
+    create() {
+
+        this.cameras.main.setBackgroundColor("#87CEEB");
 
         this.add.text(
-
-            370,
-
-            120,
-
+            640,
+            150,
             "🎮 ตู้คีบคำศัพท์",
-
             {
-
-                fontSize:"52px",
-
-                color:"#000",
-
-                fontStyle:"bold"
-
+                fontSize: "56px",
+                color: "#000",
+                fontStyle: "bold"
             }
+        ).setOrigin(0.5);
 
-        );
+        const btn = this.add.rectangle(
+            640,
+            400,
+            260,
+            80,
+            0xFFD54F
+        ).setInteractive();
 
-        const btn=this.add.text(
-
-            470,
-
-            350,
-
-            "▶ เริ่มเกม",
-
+        this.add.text(
+            640,
+            400,
+            "เริ่มเกม",
             {
-
-                fontSize:"44px",
-
-                backgroundColor:"#FFD54F",
-
-                padding:20,
-
-                color:"#000"
-
+                fontSize: "36px",
+                color: "#000"
             }
+        ).setOrigin(0.5);
 
-        );
-
-        btn.setInteractive();
-
-        btn.on("pointerdown",()=>{
+        btn.on("pointerdown", () => {
 
             this.scene.start("GameScene");
 
