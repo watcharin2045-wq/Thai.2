@@ -6,7 +6,42 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // =====================
+        // ลูกบอลแคปซูล
+        // =====================
 
+        const colors = [
+            0xffcc33,
+            0xff6699,
+            0x66ccff,
+            0x66ff99,
+            0xcc99ff
+        ];
+
+        this.capsules = [];
+
+        for(let row=0; row<4; row++){
+
+            for(let col=0; col<5; col++){
+
+                const x = 500 + col * 70;
+
+                const y = 260 + row * 70;
+
+                const color = Phaser.Utils.Array.GetRandom(colors);
+
+                const capsule = new Capsule(
+                    this,
+                    x,
+                    y,
+                    color
+                );
+
+                this.capsules.push(capsule);
+
+    }
+
+}
         //==========================
         // Background
         //==========================
