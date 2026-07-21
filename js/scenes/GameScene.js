@@ -555,11 +555,25 @@ export default class GameScene extends Phaser.Scene {
                 ) {
 
 
+                    // ========================================
+                    // คีบถูก
+                    // ========================================
+
+                    capsule.successEffect();
+
+
                     this.correctAnswer();
 
                 }
 
-                else {
+                    else {
+
+
+                    // ========================================
+                    // คีบผิด
+                    // ========================================
+
+                    capsule.wrongEffect();
 
 
                     this.wrongAnswer();
