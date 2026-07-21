@@ -1,319 +1,285 @@
+// ========================================
+// GameScene
+// Thai Claw Game V4.0
+// ========================================
+
+import Machine from "../objects/Machine.js";
+
+import Claw from "../objects/Claw.js";
+
+
 export default class GameScene extends Phaser.Scene {
 
     constructor() {
+
         super("GameScene");
+
     }
+
 
     create() {
 
-        // =========================
-        // พื้นหลัง
-        // =========================
-
-        this.cameras.main.setBackgroundColor("#9EDFFF");
-
-        // =========================
-        // หัวข้อเกม
-        // =========================
-
-        this.add.text(
-            40,
-            20,
-            "🎮 ตู้คีบคำศัพท์",
-            {
-                fontSize: "40px",
-                fontStyle: "bold",
-                color: "#000000"
-            }
-        );
-
-        // =========================
-        // คะแนน
-        // =========================
+        // ========================================
+        // ตัวแปรเกม
+        // ========================================
 
         this.score = 0;
 
-        this.scoreText = this.add.text(
-            1080,
-            20,
-            "⭐ 0",
-            {
-                fontSize: "30px",
-                color: "#000000"
-            }
+        this.isPlaying = true;
+
+        this.isClawMoving = false;
+
+
+        // ========================================
+        // พื้นหลัง
+        // ========================================
+
+        this.cameras.main.setBackgroundColor(
+            "#9EDFFF"
         );
 
-        // =========================
-        // ชีวิต
-        // =========================
+
+        // ========================================
+        // หัวข้อ
+        // ========================================
 
         this.add.text(
-            1080,
-            60,
-            "❤️❤️❤️",
+
+            40,
+
+            25,
+
+            "🎮 ตู้คีบคำศัพท์",
+
             {
-                fontSize: "24px"
-            }
-        );
 
-        // =========================
-        // เงาตู้
-        // =========================
+                fontSize: "40px",
 
-        this.add.rectangle(
-            648,
-            366,
-            730,
-            530,
-            0x777777,
-            0.25
-        );
+                fontFamily: "Arial",
 
-        // =========================
-        // ตัวตู้
-        // =========================
+                fontStyle: "bold",
 
-        this.add.rectangle(
-            640,
-            360,
-            720,
-            520,
-            0xffffff
-        );
-
-        // กระจก
-
-        this.add.rectangle(
-            640,
-            325,
-            680,
-            430,
-            0xdff7ff
-        );
-
-        // ฐานเครื่อง
-
-        this.add.rectangle(
-            640,
-            580,
-            720,
-            80,
-            0x666666
-        );
-
-        // =========================
-        // ไฟ LED ด้านบน
-        // =========================
-
-        for(let i=0;i<18;i++){
-
-            this.add.circle(
-                300+i*38,
-                100,
-                6,
-                0xffee00
-            );
-
-        }
-
-        // ล่าง
-
-        for(let i=0;i<18;i++){
-
-            this.add.circle(
-                300+i*38,
-                620,
-                6,
-                0xff66aa
-            );
-
-        }
-
-        // ซ้าย
-
-        for(let i=0;i<12;i++){
-
-            this.add.circle(
-                300,
-                145+i*38,
-                6,
-                0x66ff66
-            );
-
-        }
-
-        // ขวา
-
-        for(let i=0;i<12;i++){
-
-            this.add.circle(
-                980,
-                145+i*38,
-                6,
-                0x66ccff
-            );
-
-        }
-
-        // =========================
-        // แขนคีบ
-        // =========================
-
-        this.rope=this.add.rectangle(
-            640,
-            140,
-            4,
-            120,
-            0x333333
-        );
-
-        this.head=this.add.circle(
-            640,
-            200,
-            18,
-            0xdddddd
-        );
-
-        this.left=this.add.line(
-            0,
-            0,
-            640,
-            200,
-            620,
-            230,
-            0x444444
-        );
-
-        this.right=this.add.line(
-            0,
-            0,
-            640,
-            200,
-            660,
-            230,
-            0x444444
-        );
-
-        // =========================
-        // ลูกบอล
-        // =========================
-
-        const colors=[
-            0xffcc33,
-            0xff6699,
-            0x66ccff,
-            0x66ff99,
-            0xcc99ff
-        ];
-
-        this.capsules=[];
-
-        for(let row=0;row<4;row++){
-
-            for(let col=0;col<5;col++){
-
-                const ball=this.add.circle(
-
-                    500+col*70,
-
-                    260+row*70,
-
-                    25,
-
-                    Phaser.Utils.Array.GetRandom(colors)
-
-                );
-
-                this.capsules.push(ball);
+                color: "#0D47A1"
 
             }
 
-        }
+        );
 
-        // =========================
-        // คำศัพท์
-        // =========================
 
-        this.wordText=this.add.text(
+        // ========================================
+        // คะแนน
+        // ========================================
+
+        this.scoreText = this.add.text(
+
+            1050,
+
+            30,
+
+            "⭐ 0",
+
+            {
+
+                fontSize: "32px",
+
+                fontFamily: "Arial",
+
+                fontStyle: "bold",
+
+                color: "#333333"
+
+            }
+
+        );
+
+
+        // ========================================
+        // สร้างตู้คีบ
+        // ========================================
+
+        this.machine = new Machine(
+            this
+        );
+
+
+        // ========================================
+        // สร้างแขนคีบ
+        // ========================================
+
+        this.claw = new Claw(
+            this
+        );
+
+
+        // ========================================
+        // คำศัพท์เป้าหมาย
+        // ========================================
+
+        this.add.text(
 
             640,
 
             665,
 
-            "ปลา",
+            "📖 คำที่ต้องอ่าน: ปลา",
 
             {
 
-                fontSize:"42px",
+                fontSize: "32px",
 
-                fontStyle:"bold",
+                fontFamily: "Arial",
 
-                color:"#0D47A1"
+                fontStyle: "bold",
+
+                color: "#0D47A1"
 
             }
 
         ).setOrigin(0.5);
 
-        // =========================
-        // ปุ่ม Space
-        // =========================
+
+        // ========================================
+        // คำแนะนำ
+        // ========================================
 
         this.add.text(
 
             40,
 
-            675,
+            680,
 
             "กด SPACE เพื่อคีบ",
 
             {
 
-                fontSize:"26px",
+                fontSize: "24px",
 
-                color:"#000"
+                fontFamily: "Arial",
+
+                color: "#333333"
 
             }
 
         );
 
-        this.input.keyboard.on("keydown-SPACE",()=>{
 
-            this.moveClaw();
+        // ========================================
+        // ควบคุมด้วย SPACE
+        // ========================================
 
-        });
+        this.input.keyboard.on(
 
-    }
+            "keydown-SPACE",
 
-    moveClaw(){
+            () => {
 
-        if(this.moving) return;
-
-        this.moving=true;
-
-        this.tweens.add({
-
-            targets:[
-                this.rope,
-                this.head,
-                this.left,
-                this.right
-            ],
-
-            y:"+=220",
-
-            duration:700,
-
-            yoyo:true,
-
-            ease:"Sine.easeInOut",
-
-            onComplete:()=>{
-
-                this.moving=false;
+                this.startClaw();
 
             }
 
-        });
+        );
+
+
+        // ========================================
+        // ควบคุมด้วยการคลิก
+        // ========================================
+
+        this.input.on(
+
+            "pointerdown",
+
+            () => {
+
+                this.startClaw();
+
+            }
+
+        );
+
+    }
+
+
+    // ========================================
+    // เริ่มการคีบ
+    // ========================================
+
+    startClaw() {
+
+        if (
+            this.isClawMoving
+        ) {
+
+            return;
+
+        }
+
+
+        this.isClawMoving = true;
+
+
+        this.claw.grab(
+
+            () => {
+
+                this.isClawMoving = false;
+
+                this.addScore();
+
+            }
+
+        );
+
+    }
+
+
+    // ========================================
+    // เพิ่มคะแนน
+    // ========================================
+
+    addScore() {
+
+        this.score += 1;
+
+
+        this.scoreText.setText(
+
+            "⭐ " + this.score
+
+        );
+
+
+        // ========================================
+        // ถ้าได้ 5 คะแนน
+        // จบเกม
+        // ========================================
+
+        if (
+            this.score >= 5
+        ) {
+
+            this.time.delayedCall(
+
+                800,
+
+                () => {
+
+                    this.scene.start(
+
+                        "ResultScene",
+
+                        {
+
+                            score: this.score
+
+                        }
+
+                    );
+
+                }
+
+            );
+
+        }
 
     }
 
