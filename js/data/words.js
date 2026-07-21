@@ -1,82 +1,238 @@
-
 // ========================================
-// Words Data
+// words.js
+// ฐานข้อมูลคำศัพท์
 // Thai Claw Game V4.0
-// คำศัพท์ภาษาไทยระดับเริ่มต้น
 // ========================================
 
 const words = [
 
-    {
-        word: "ปลา",
-        emoji: "🐟",
-        syllable: "ปอ - ลา"
-    },
+    // ========================================
+    // พยัญชนะและสระ
+    // ========================================
 
     {
         word: "กา",
-        emoji: "🐦",
-        syllable: "กา"
-    },
-
-    {
-        word: "มา",
-        emoji: "🚶",
-        syllable: "มา"
+        category: "basic"
     },
 
     {
         word: "ตา",
-        emoji: "👁️",
-        syllable: "ตา"
-    },
-
-    {
-        word: "ยา",
-        emoji: "💊",
-        syllable: "ยา"
+        category: "basic"
     },
 
     {
         word: "นา",
-        emoji: "🌾",
-        syllable: "นา"
+        category: "basic"
+    },
+
+    {
+        word: "มา",
+        category: "basic"
     },
 
     {
         word: "ปู",
-        emoji: "🦀",
-        syllable: "ปู"
+        category: "basic"
     },
 
     {
         word: "ดู",
-        emoji: "👀",
-        syllable: "ดู"
+        category: "basic"
     },
 
     {
         word: "หู",
-        emoji: "👂",
-        syllable: "หู"
+        category: "basic"
     },
 
     {
-        word: "งู",
-        emoji: "🐍",
-        syllable: "งู"
+        word: "สี",
+        category: "basic"
     },
 
     {
-        word: "หมู",
-        emoji: "🐷",
-        syllable: "หมู"
+        word: "มี",
+        category: "basic"
+    },
+
+    {
+        word: "ดี",
+        category: "basic"
+    },
+
+
+    // ========================================
+    // อ่านคำง่าย ๆ
+    // ========================================
+
+    {
+        word: "ปลา",
+        category: "reading"
     },
 
     {
         word: "แมว",
-        emoji: "🐱",
-        syllable: "แมว"
+        category: "reading"
+    },
+
+    {
+        word: "บ้าน",
+        category: "reading"
+    },
+
+    {
+        word: "โต๊ะ",
+        category: "reading"
+    },
+
+    {
+        word: "เก้าอี้",
+        category: "reading"
+    },
+
+    {
+        word: "ดินสอ",
+        category: "reading"
+    },
+
+    {
+        word: "หนังสือ",
+        category: "reading"
+    },
+
+    {
+        word: "โรงเรียน",
+        category: "reading"
+    },
+
+
+    // ========================================
+    // หมวดสัตว์
+    // ========================================
+
+    {
+        word: "แมว",
+        category: "animals"
+    },
+
+    {
+        word: "หมา",
+        category: "animals"
+    },
+
+    {
+        word: "ปลา",
+        category: "animals"
+    },
+
+    {
+        word: "นก",
+        category: "animals"
+    },
+
+    {
+        word: "ไก่",
+        category: "animals"
+    },
+
+    {
+        word: "หมู",
+        category: "animals"
+    },
+
+    {
+        word: "ช้าง",
+        category: "animals"
+    },
+
+    {
+        word: "ม้า",
+        category: "animals"
+    },
+
+
+    // ========================================
+    // หมวดผลไม้
+    // ========================================
+
+    {
+        word: "กล้วย",
+        category: "fruits"
+    },
+
+    {
+        word: "มะม่วง",
+        category: "fruits"
+    },
+
+    {
+        word: "แตงโม",
+        category: "fruits"
+    },
+
+    {
+        word: "ส้ม",
+        category: "fruits"
+    },
+
+    {
+        word: "องุ่น",
+        category: "fruits"
+    },
+
+    {
+        word: "มะละกอ",
+        category: "fruits"
+    },
+
+    {
+        word: "ทุเรียน",
+        category: "fruits"
+    },
+
+
+    // ========================================
+    // สิ่งของรอบตัว
+    // ========================================
+
+    {
+        word: "โต๊ะ",
+        category: "objects"
+    },
+
+    {
+        word: "เก้าอี้",
+        category: "objects"
+    },
+
+    {
+        word: "ดินสอ",
+        category: "objects"
+    },
+
+    {
+        word: "ปากกา",
+        category: "objects"
+    },
+
+    {
+        word: "หนังสือ",
+        category: "objects"
+    },
+
+    {
+        word: "กระเป๋า",
+        category: "objects"
+    },
+
+    {
+        word: "ยางลบ",
+        category: "objects"
+    },
+
+    {
+        word: "ไม้บรรทัด",
+        category: "objects"
     }
 
 ];
