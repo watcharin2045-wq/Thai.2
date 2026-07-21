@@ -1,5 +1,6 @@
 // ========================================
 // GameScene.js
+// ระบบเกมหลัก
 // Thai Claw Game V4.0
 // ========================================
 
@@ -8,6 +9,8 @@ import Machine from "../objects/Machine.js";
 import Claw from "../objects/Claw.js";
 
 import Capsule from "../objects/Capsule.js";
+
+import SoundManager from "../utils/SoundManager.js";
 
 import words from "../data/words.js";
 
@@ -28,10 +31,12 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // คะแนน
+        // ตัวแปรเกม
         // ========================================
 
         this.score = 0;
+
+        this.lives = 3;
 
 
         // ========================================
@@ -46,6 +51,19 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
+        // ระบบเสียง
+        // ========================================
+
+        this.soundManager =
+
+            new SoundManager(
+
+                this
+
+            );
+
+
+        // ========================================
         // หัวข้อ
         // ========================================
 
@@ -53,7 +71,7 @@ export default class GameScene extends Phaser.Scene {
 
             40,
 
-            25,
+            20,
 
             "🎮 ตู้คีบคำศัพท์",
 
@@ -80,9 +98,9 @@ export default class GameScene extends Phaser.Scene {
 
             this.add.text(
 
-                1050,
+                1030,
 
-                25,
+                20,
 
                 "⭐ 0",
 
@@ -95,6 +113,29 @@ export default class GameScene extends Phaser.Scene {
                     fontStyle: "bold",
 
                     color: "#333333"
+
+                }
+
+            );
+
+
+        // ========================================
+        // หัวใจ
+        // ========================================
+
+        this.lifeText =
+
+            this.add.text(
+
+                1030,
+
+                65,
+
+                "❤️ ❤️ ❤️",
+
+                {
+
+                    fontSize: "30px"
 
                 }
 
@@ -115,7 +156,7 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // สร้างแขนคีบ
+        // สร้างแขน
         // ========================================
 
         this.claw =
@@ -135,35 +176,39 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // คำศัพท์เป้าหมาย
+        // ตั้งคำศัพท์
         // ========================================
 
         this.setNewWord();
 
 
         // ========================================
-        // คำแนะนำ
+        // คำศัพท์
         // ========================================
 
-        this.instructionText =
+        this.wordText =
 
             this.add.text(
 
                 640,
 
-                650,
+                615,
 
                 "",
 
                 {
 
-                    fontSize: "32px",
+                    fontSize: "48px",
 
                     fontFamily: "Arial",
 
                     fontStyle: "bold",
 
-                    color: "#0D47A1"
+                    color: "#0D47A1",
+
+                    stroke: "#FFFFFF",
+
+                    strokeThickness: 6
 
                 }
 
@@ -172,42 +217,34 @@ export default class GameScene extends Phaser.Scene {
             .setOrigin(0.5);
 
 
-        this.instructionText.setText(
-
-            "อ่านคำว่า: " +
-
-            this.currentWord.word
-
-        );
+        this.updateWordText();
 
 
         // ========================================
-        // ปุ่มควบคุม
+        // คำแนะนำ
         // ========================================
 
-        this.controlText =
+        this.add.text(
 
-            this.add.text(
+            640,
 
-                640,
+            665,
 
-                690,
+            "⬅️ ➡️ เลื่อนแขน   |   SPACE คีบ   |   🔊 กด F ฟังคำ",
 
-                "⬅️ ➡️ เลื่อนแขน   |   SPACE คีบ",
+            {
 
-                {
+                fontSize: "22px",
 
-                    fontSize: "22px",
+                fontFamily: "Arial",
 
-                    fontFamily: "Arial",
+                color: "#333333"
 
-                    color: "#333333"
+            }
 
-                }
+        )
 
-            )
-
-            .setOrigin(0.5);
+        .setOrigin(0.5);
 
 
         // ========================================
@@ -224,7 +261,20 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // ปุ่มกด SPACE
+        // ปุ่ม F
+        // ========================================
+
+        this.soundKey =
+
+            this.input.keyboard.addKey(
+
+                Phaser.Input.Keyboard.KeyCodes.F
+
+            );
+
+
+        // ========================================
+        // SPACE
         // ========================================
 
         this.spaceKey.on(
@@ -234,6 +284,27 @@ export default class GameScene extends Phaser.Scene {
             () => {
 
                 this.startClaw();
+
+            }
+
+        );
+
+
+        // ========================================
+        // F
+        // ========================================
+
+        this.soundKey.on(
+
+            "down",
+
+            () => {
+
+                this.soundManager.speak(
+
+                    this.currentWord.word
+
+                );
 
             }
 
@@ -384,7 +455,7 @@ export default class GameScene extends Phaser.Scene {
 
 
     // ========================================
-    // สุ่มคำศัพท์
+    // คำศัพท์ใหม่
     // ========================================
 
     setNewWord() {
@@ -399,21 +470,38 @@ export default class GameScene extends Phaser.Scene {
             );
 
 
+        this.updateWordText();
+
+    }
+
+
+    // ========================================
+    // แสดงคำศัพท์
+    // ========================================
+
+    updateWordText() {
+
+
         if (
 
-            this.instructionText
+            !this.wordText ||
+
+            !this.currentWord
 
         ) {
 
-            this.instructionText.setText(
-
-                "อ่านคำว่า: " +
-
-                this.currentWord.word
-
-            );
+            return;
 
         }
+
+
+        this.wordText.setText(
+
+            "📖 อ่านคำว่า  " +
+
+            this.currentWord.word
+
+        );
 
     }
 
@@ -455,7 +543,7 @@ export default class GameScene extends Phaser.Scene {
 
 
                 // ========================================
-                // ตรวจว่าคำถูกหรือไม่
+                // ตรวจคำตอบ
                 // ========================================
 
                 if (
@@ -467,74 +555,14 @@ export default class GameScene extends Phaser.Scene {
                 ) {
 
 
-                    // ถูกต้อง
-
-                    this.score += 1;
-
-
-                    this.scoreText.setText(
-
-                        "⭐ " +
-
-                        this.score
-
-                    );
-
-
-                    this.showCorrect();
-
-
-                    // สุ่มคำใหม่
-
-                    this.setNewWord();
-
-
-                    // ตรวจชนะ
-
-                    if (
-
-                        this.score >=
-
-                        GameConfig.WIN_SCORE
-
-                    ) {
-
-
-                        this.time.delayedCall(
-
-                            1200,
-
-                            () => {
-
-
-                                this.scene.start(
-
-                                    "ResultScene",
-
-                                    {
-
-                                        score:
-
-                                            this.score
-
-                                    }
-
-                                );
-
-                            }
-
-                        );
-
-                    }
+                    this.correctAnswer();
 
                 }
 
                 else {
 
 
-                    // ผิด
-
-                    this.showWrong();
+                    this.wrongAnswer();
 
                 }
 
@@ -549,10 +577,29 @@ export default class GameScene extends Phaser.Scene {
     // ตอบถูก
     // ========================================
 
-    showCorrect() {
+    correctAnswer() {
 
 
-        const text =
+        this.score += 1;
+
+
+        this.scoreText.setText(
+
+            "⭐ " +
+
+            this.score
+
+        );
+
+
+        this.soundManager.correct();
+
+
+        // ========================================
+        // เอฟเฟกต์
+        // ========================================
+
+        const correctText =
 
             this.add.text(
 
@@ -560,11 +607,11 @@ export default class GameScene extends Phaser.Scene {
 
                 220,
 
-                "🎉 ถูกต้อง!",
+                "🎉 เก่งมาก! ถูกต้อง!",
 
                 {
 
-                    fontSize: "56px",
+                    fontSize: "52px",
 
                     fontFamily: "Arial",
 
@@ -585,24 +632,88 @@ export default class GameScene extends Phaser.Scene {
 
         this.tweens.add({
 
-            targets: text,
+            targets:
 
-            scale: 1.2,
+                correctText,
 
-            duration: 300,
 
-            yoyo: true,
+            scale:
 
-            repeat: 2,
+                1.25,
+
+
+            duration:
+
+                250,
+
+
+            yoyo:
+
+                true,
+
+
+            repeat:
+
+                2,
 
 
             onComplete: () => {
 
-                text.destroy();
+
+                correctText.destroy();
+
 
             }
 
         });
+
+
+        // ========================================
+        // สุ่มคำใหม่
+        // ========================================
+
+        this.setNewWord();
+
+
+        // ========================================
+        // ชนะ
+        // ========================================
+
+        if (
+
+            this.score >=
+
+            GameConfig.WIN_SCORE
+
+        ) {
+
+
+            this.time.delayedCall(
+
+                1500,
+
+                () => {
+
+
+                    this.scene.start(
+
+                        "ResultScene",
+
+                        {
+
+                            score:
+
+                                this.score
+
+                        }
+
+                    );
+
+                }
+
+            );
+
+        }
 
     }
 
@@ -611,10 +722,19 @@ export default class GameScene extends Phaser.Scene {
     // ตอบผิด
     // ========================================
 
-    showWrong() {
+    wrongAnswer() {
 
 
-        const text =
+        this.lives -= 1;
+
+
+        this.updateLives();
+
+
+        this.soundManager.wrong();
+
+
+        const wrongText =
 
             this.add.text(
 
@@ -622,7 +742,7 @@ export default class GameScene extends Phaser.Scene {
 
                 220,
 
-                "ลองใหม่อีกครั้งนะ 😊",
+                "❌ ยังไม่ถูก ลองใหม่นะ",
 
                 {
 
@@ -647,20 +767,102 @@ export default class GameScene extends Phaser.Scene {
 
         this.tweens.add({
 
-            targets: text,
+            targets:
 
-            alpha: 0,
+                wrongText,
 
-            duration: 1200,
+
+            alpha:
+
+                0,
+
+
+            duration:
+
+                1500,
 
 
             onComplete: () => {
 
-                text.destroy();
+
+                wrongText.destroy();
 
             }
 
         });
+
+
+        // ========================================
+        // หัวใจหมด
+        // ========================================
+
+        if (
+
+            this.lives <= 0
+
+        ) {
+
+
+            this.time.delayedCall(
+
+                1500,
+
+                () => {
+
+
+                    this.scene.start(
+
+                        "ResultScene",
+
+                        {
+
+                            score:
+
+                                this.score
+
+                        }
+
+                    );
+
+                }
+
+            );
+
+        }
+
+    }
+
+
+    // ========================================
+    // อัปเดตหัวใจ
+    // ========================================
+
+    updateLives() {
+
+
+        let hearts = "";
+
+
+        for (
+
+            let i = 0;
+
+            i < this.lives;
+
+            i++
+
+        ) {
+
+            hearts += "❤️ ";
+
+        }
+
+
+        this.lifeText.setText(
+
+            hearts
+
+        );
 
     }
 
