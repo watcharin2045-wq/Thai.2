@@ -27,7 +27,15 @@ export default class GameScene extends Phaser.Scene {
     }
 
 
-    create() {
+    create(data) {
+
+            // ========================================
+            // รับหมวดคำศัพท์จาก MenuScene
+            // ========================================
+
+            this.category =
+
+                data?.category || "basic";
 
 
         // ========================================
@@ -170,6 +178,10 @@ export default class GameScene extends Phaser.Scene {
 
         // ========================================
         // สร้างแคปซูล
+        // ========================================
+
+       // ========================================
+        // สร้างตุ๊กตาตามหมวดที่เลือก
         // ========================================
 
         this.createCapsules();
@@ -340,114 +352,160 @@ export default class GameScene extends Phaser.Scene {
     createCapsules() {
 
 
-        this.capsules = [];
+    this.capsules = [];
 
 
-        const colors = [
+    // ========================================
+    // กรองคำศัพท์ตามหมวด
+    // ========================================
 
-            0xFFCC33,
+    this.categoryWords =
 
-            0xFF6699,
+        words.filter(
 
-            0x66CCFF,
+            word =>
 
-            0x66FF99,
+                word.category ===
 
-            0xCC99FF
+                this.category
 
-        ];
+        );
+
+
+    // ========================================
+    // ถ้าไม่มีข้อมูล
+    // ========================================
+
+    if (
+
+        this.categoryWords.length === 0
+
+    ) {
+
+        this.categoryWords =
+
+            words;
+
+    }
+
+
+    const colors = [
+
+        0xFFCC33,
+
+        0xFF6699,
+
+        0x66CCFF,
+
+        0x66FF99,
+
+        0xCC99FF
+
+    ];
+
+
+    // ========================================
+    // สร้างตุ๊กตา
+    // ========================================
+
+    for (
+
+        let row = 0;
+
+        row <
+
+        GameConfig.CAPSULE_ROWS;
+
+        row++
+
+    ) {
 
 
         for (
 
-            let row = 0;
+            let col = 0;
 
-            row <
+            col <
 
-            GameConfig.CAPSULE_ROWS;
+            GameConfig.CAPSULE_COLS;
 
-            row++
+            col++
 
         ) {
 
 
-            for (
+            const x =
 
-                let col = 0;
+                GameConfig.CAPSULE_START_X
 
-                col <
+                +
 
-                GameConfig.CAPSULE_COLS;
+                col *
 
-                col++
-
-            ) {
+                GameConfig.CAPSULE_GAP_X;
 
 
-                const x =
+            const y =
 
-                    GameConfig.CAPSULE_START_X
+                GameConfig.CAPSULE_START_Y
 
-                    +
+                +
 
-                    col *
+                row *
 
-                    GameConfig.CAPSULE_GAP_X;
-
-
-                const y =
-
-                    GameConfig.CAPSULE_START_Y
-
-                    +
-
-                    row *
-
-                    GameConfig.CAPSULE_GAP_Y;
+                GameConfig.CAPSULE_GAP_Y;
 
 
-                const color =
+            const color =
 
-                    Phaser.Utils.Array.GetRandom(
+                Phaser.Utils.Array.GetRandom(
 
-                        colors
-
-                    );
-
-
-                const wordData =
-
-                    Phaser.Utils.Array.GetRandom(
-
-                        words
-
-                    );
-
-
-                const capsule =
-
-                    new Capsule(
-
-                        this,
-
-                        x,
-
-                        y,
-
-                        color,
-
-                        wordData
-
-                    );
-
-
-                this.capsules.push(
-
-                    capsule
+                    colors
 
                 );
 
-            }
+
+            // ========================================
+            // เลือกคำศัพท์จากหมวด
+            // ========================================
+
+            const wordData =
+
+                Phaser.Utils.Array.GetRandom(
+
+                    this.categoryWords
+
+                );
+
+
+            const capsule =
+
+                new Capsule(
+
+                    this,
+
+                    x,
+
+                    y,
+
+                    color,
+
+                    wordData
+
+                );
+
+
+            this.capsules.push(
+
+                capsule
+
+            );
+
+        }
+
+    }
+
+}
 
         }
 
@@ -458,21 +516,40 @@ export default class GameScene extends Phaser.Scene {
     // คำศัพท์ใหม่
     // ========================================
 
-    setNewWord() {
+   setNewWord() {
 
 
-        this.currentWord =
+    // ========================================
+    // ใช้คำศัพท์เฉพาะหมวด
+    // ========================================
 
-            Phaser.Utils.Array.GetRandom(
+    if (
 
-                words
+        !this.categoryWords ||
 
-            );
+        this.categoryWords.length === 0
 
+    ) {
 
-        this.updateWordText();
+        this.categoryWords =
+
+            words;
 
     }
+
+
+    this.currentWord =
+
+        Phaser.Utils.Array.GetRandom(
+
+            this.categoryWords
+
+        );
+
+
+    this.updateWordText();
+
+}
 
 
     // ========================================
