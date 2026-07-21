@@ -1,5 +1,5 @@
 // ========================================
-// GameScene
+// GameScene.js
 // Thai Claw Game V4.0
 // ========================================
 
@@ -16,6 +16,7 @@ import GameConfig from "../utils/GameConfig.js";
 
 export default class GameScene extends Phaser.Scene {
 
+
     constructor() {
 
         super("GameScene");
@@ -25,18 +26,12 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
 
+
         // ========================================
         // คะแนน
         // ========================================
 
         this.score = 0;
-
-
-        // ========================================
-        // สถานะ
-        // ========================================
-
-        this.isClawMoving = false;
 
 
         // ========================================
@@ -64,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
 
             {
 
-                fontSize: "40px",
+                fontSize: "42px",
 
                 fontFamily: "Arial",
 
@@ -81,49 +76,55 @@ export default class GameScene extends Phaser.Scene {
         // คะแนน
         // ========================================
 
-        this.scoreText = this.add.text(
+        this.scoreText =
 
-            1050,
+            this.add.text(
 
-            30,
+                1050,
 
-            "⭐ 0",
+                25,
 
-            {
+                "⭐ 0",
 
-                fontSize: "32px",
+                {
 
-                fontFamily: "Arial",
+                    fontSize: "36px",
 
-                fontStyle: "bold",
+                    fontFamily: "Arial",
 
-                color: "#333333"
+                    fontStyle: "bold",
 
-            }
+                    color: "#333333"
 
-        );
+                }
+
+            );
 
 
         // ========================================
         // สร้างตู้
         // ========================================
 
-        this.machine = new Machine(
+        this.machine =
 
-            this
+            new Machine(
 
-        );
+                this
+
+            );
 
 
         // ========================================
-        // สร้างแขน
+        // สร้างแขนคีบ
         // ========================================
 
-        this.claw = new Claw(
+        this.claw =
 
-            this
+            new Claw(
 
-        );
+                this
+
+            );
 
 
         // ========================================
@@ -134,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // สุ่มคำศัพท์
+        // คำศัพท์เป้าหมาย
         // ========================================
 
         this.setNewWord();
@@ -144,53 +145,91 @@ export default class GameScene extends Phaser.Scene {
         // คำแนะนำ
         // ========================================
 
-        this.instructionText = this.add.text(
+        this.instructionText =
 
-            640,
+            this.add.text(
 
-            665,
+                640,
 
-            "🎯 อ่านคำว่า: ปลา",
+                650,
 
-            {
+                "",
 
-                fontSize: "32px",
+                {
 
-                fontFamily: "Arial",
+                    fontSize: "32px",
 
-                fontStyle: "bold",
+                    fontFamily: "Arial",
 
-                color: "#0D47A1"
+                    fontStyle: "bold",
 
-            }
+                    color: "#0D47A1"
 
-        ).setOrigin(0.5);
+                }
+
+            )
+
+            .setOrigin(0.5);
+
+
+        this.instructionText.setText(
+
+            "อ่านคำว่า: " +
+
+            this.currentWord.word
+
+        );
+
+
+        // ========================================
+        // ปุ่มควบคุม
+        // ========================================
+
+        this.controlText =
+
+            this.add.text(
+
+                640,
+
+                690,
+
+                "⬅️ ➡️ เลื่อนแขน   |   SPACE คีบ",
+
+                {
+
+                    fontSize: "22px",
+
+                    fontFamily: "Arial",
+
+                    color: "#333333"
+
+                }
+
+            )
+
+            .setOrigin(0.5);
 
 
         // ========================================
         // ปุ่ม SPACE
         // ========================================
 
-        this.input.keyboard.on(
+        this.spaceKey =
 
-            "keydown-SPACE",
+            this.input.keyboard.addKey(
 
-            () => {
+                Phaser.Input.Keyboard.KeyCodes.SPACE
 
-                this.startClaw();
-
-            }
-
-        );
+            );
 
 
         // ========================================
-        // คลิกหน้าจอ
+        // ปุ่มกด SPACE
         // ========================================
 
-        this.input.on(
+        this.spaceKey.on(
 
-            "pointerdown",
+            "down",
 
             () => {
 
@@ -204,10 +243,31 @@ export default class GameScene extends Phaser.Scene {
 
 
     // ========================================
+    // Update
+    // ========================================
+
+    update() {
+
+
+        if (
+
+            this.claw
+
+        ) {
+
+            this.claw.update();
+
+        }
+
+    }
+
+
+    // ========================================
     // สร้างแคปซูล
     // ========================================
 
     createCapsules() {
+
 
         this.capsules = [];
 
@@ -231,7 +291,9 @@ export default class GameScene extends Phaser.Scene {
 
             let row = 0;
 
-            row < GameConfig.CAPSULE_ROWS;
+            row <
+
+            GameConfig.CAPSULE_ROWS;
 
             row++
 
@@ -242,7 +304,9 @@ export default class GameScene extends Phaser.Scene {
 
                 let col = 0;
 
-                col < GameConfig.CAPSULE_COLS;
+                col <
+
+                GameConfig.CAPSULE_COLS;
 
                 col++
 
@@ -320,10 +384,11 @@ export default class GameScene extends Phaser.Scene {
 
 
     // ========================================
-    // สุ่มคำใหม่
+    // สุ่มคำศัพท์
     // ========================================
 
     setNewWord() {
+
 
         this.currentWord =
 
@@ -334,15 +399,21 @@ export default class GameScene extends Phaser.Scene {
             );
 
 
-        this.instructionText.setText(
+        if (
 
-            "🎯 อ่านคำว่า: "
+            this.instructionText
 
-            +
+        ) {
 
-            this.currentWord.word
+            this.instructionText.setText(
 
-        );
+                "อ่านคำว่า: " +
+
+                this.currentWord.word
+
+            );
+
+        }
 
     }
 
@@ -353,18 +424,16 @@ export default class GameScene extends Phaser.Scene {
 
     startClaw() {
 
+
         if (
 
-            this.isClawMoving
+            this.claw.isMoving
 
         ) {
 
             return;
 
         }
-
-
-        this.isClawMoving = true;
 
 
         this.claw.grab(
@@ -374,52 +443,53 @@ export default class GameScene extends Phaser.Scene {
             (capsule) => {
 
 
+                if (
+
+                    !capsule
+
+                ) {
+
+                    return;
+
+                }
+
+
                 // ========================================
-                // ถ้าคีบได้
+                // ตรวจว่าคำถูกหรือไม่
                 // ========================================
 
                 if (
 
-                    capsule
+                    capsule.wordData.word ===
+
+                    this.currentWord.word
 
                 ) {
 
 
-                    // ========================================
-                    // แสดงคำศัพท์
-                    // ========================================
+                    // ถูกต้อง
 
-                    capsule.showWord();
-
-
-                    // ========================================
-                    // เพิ่มคะแนน
-                    // ========================================
-
-                    this.score++;
+                    this.score += 1;
 
 
                     this.scoreText.setText(
 
-                        "⭐ "
-
-                        +
+                        "⭐ " +
 
                         this.score
 
                     );
 
 
-                    // ========================================
+                    this.showCorrect();
+
+
                     // สุ่มคำใหม่
-                    // ========================================
 
                     this.setNewWord();
 
 
-                    // ========================================
-                    // ตรวจสอบชนะ
-                    // ========================================
+                    // ตรวจชนะ
 
                     if (
 
@@ -432,7 +502,7 @@ export default class GameScene extends Phaser.Scene {
 
                         this.time.delayedCall(
 
-                            1500,
+                            1200,
 
                             () => {
 
@@ -459,12 +529,138 @@ export default class GameScene extends Phaser.Scene {
 
                 }
 
+                else {
 
-                this.isClawMoving = false;
+
+                    // ผิด
+
+                    this.showWrong();
+
+                }
 
             }
 
         );
+
+    }
+
+
+    // ========================================
+    // ตอบถูก
+    // ========================================
+
+    showCorrect() {
+
+
+        const text =
+
+            this.add.text(
+
+                640,
+
+                220,
+
+                "🎉 ถูกต้อง!",
+
+                {
+
+                    fontSize: "56px",
+
+                    fontFamily: "Arial",
+
+                    fontStyle: "bold",
+
+                    color: "#2E7D32",
+
+                    stroke: "#FFFFFF",
+
+                    strokeThickness: 8
+
+                }
+
+            )
+
+            .setOrigin(0.5);
+
+
+        this.tweens.add({
+
+            targets: text,
+
+            scale: 1.2,
+
+            duration: 300,
+
+            yoyo: true,
+
+            repeat: 2,
+
+
+            onComplete: () => {
+
+                text.destroy();
+
+            }
+
+        });
+
+    }
+
+
+    // ========================================
+    // ตอบผิด
+    // ========================================
+
+    showWrong() {
+
+
+        const text =
+
+            this.add.text(
+
+                640,
+
+                220,
+
+                "ลองใหม่อีกครั้งนะ 😊",
+
+                {
+
+                    fontSize: "42px",
+
+                    fontFamily: "Arial",
+
+                    fontStyle: "bold",
+
+                    color: "#D32F2F",
+
+                    stroke: "#FFFFFF",
+
+                    strokeThickness: 6
+
+                }
+
+            )
+
+            .setOrigin(0.5);
+
+
+        this.tweens.add({
+
+            targets: text,
+
+            alpha: 0,
+
+            duration: 1200,
+
+
+            onComplete: () => {
+
+                text.destroy();
+
+            }
+
+        });
 
     }
 
