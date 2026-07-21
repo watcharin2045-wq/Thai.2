@@ -1,16 +1,23 @@
 // ========================================
-// Capsule
+// Capsule.js
+// ตุ๊กตาคำศัพท์
 // Thai Claw Game V4.0
 // ========================================
 
 export default class Capsule {
 
     constructor(
+
         scene,
+
         x,
+
         y,
+
         color,
+
         wordData
+
     ) {
 
         this.scene = scene;
@@ -25,29 +32,73 @@ export default class Capsule {
 
         this.isGrabbed = false;
 
+        this.isRemoved = false;
+
 
         // ========================================
-        // ตัวแคปซูล
+        // Container หลัก
         // ========================================
 
-        this.body = scene.add.circle(
+        this.container =
 
-            x,
+            scene.add.container(
 
-            y,
+                x,
 
-            25,
+                y
 
-            color
+            );
 
-        );
+
+        // ========================================
+        // เงาด้านล่าง
+        // ========================================
+
+        this.shadow =
+
+            scene.add.ellipse(
+
+                0,
+
+                30,
+
+                75,
+
+                22,
+
+                0x000000,
+
+                0.15
+
+            );
+
+
+        // ========================================
+        // ตัวตุ๊กตาหลัก
+        // ========================================
+
+        this.body =
+
+            scene.add.circle(
+
+                0,
+
+                0,
+
+                34,
+
+                color
+
+            );
 
 
         this.body.setStrokeStyle(
 
-            3,
+            4,
 
-            0xFFFFFF
+            0xFFFFFF,
+
+            0.9
 
         );
 
@@ -56,120 +107,266 @@ export default class Capsule {
         // ไฮไลต์
         // ========================================
 
-        this.highlight = scene.add.circle(
+        this.highlight =
 
-            x - 8,
+            scene.add.circle(
 
-            y - 8,
+                -12,
 
-            7,
+                -13,
 
-            0xFFFFFF,
+                9,
 
-            0.75
+                0xFFFFFF,
+
+                0.55
+
+            );
+
+
+        // ========================================
+        // ตาซ้าย
+        // ========================================
+
+        this.eyeLeft =
+
+            scene.add.circle(
+
+                -11,
+
+                -4,
+
+                5,
+
+                0x263238
+
+            );
+
+
+        // ========================================
+        // ตาขวา
+        // ========================================
+
+        this.eyeRight =
+
+            scene.add.circle(
+
+                11,
+
+                -4,
+
+                5,
+
+                0x263238
+
+            );
+
+
+        // ========================================
+        // ปาก
+        // ========================================
+
+        this.mouth =
+
+            scene.add.arc(
+
+                0,
+
+                7,
+
+                13,
+
+                13,
+
+                20,
+
+                160,
+
+                false,
+
+                0x263238
+
+            );
+
+
+        this.mouth.setStrokeStyle(
+
+            3,
+
+            0x263238
 
         );
 
 
         // ========================================
-        // ฝาครอบ
+        // แก้มซ้าย
         // ========================================
 
-        this.cap = scene.add.rectangle(
+        this.cheekLeft =
 
-            x,
+            scene.add.circle(
 
-            y - 20,
+                -20,
 
-            34,
+                9,
 
-            7,
+                5,
 
-            0xFFFFFF,
+                0xFF6688,
 
-            0.75
+                0.65
+
+            );
+
+
+        // ========================================
+        // แก้มขวา
+        // ========================================
+
+        this.cheekRight =
+
+            scene.add.circle(
+
+                20,
+
+                9,
+
+                5,
+
+                0xFF6688,
+
+                0.65
+
+            );
+
+
+        // ========================================
+        // คำศัพท์
+        // ========================================
+
+        this.wordText =
+
+            scene.add.text(
+
+                0,
+
+                52,
+
+                wordData.word,
+
+                {
+
+                    fontSize: "22px",
+
+                    fontFamily: "Arial",
+
+                    fontStyle: "bold",
+
+                    color: "#263238",
+
+                    backgroundColor: "#FFFFFF",
+
+                    padding: {
+
+                        left: 8,
+
+                        right: 8,
+
+                        top: 4,
+
+                        bottom: 4
+
+                    }
+
+                }
+
+            );
+
+
+        this.wordText.setOrigin(
+
+            0.5
 
         );
 
 
         // ========================================
-        // รวม Object
+        // เพิ่มทุกชิ้นเข้า Container
         // ========================================
 
-        this.parts = [
+        this.container.add([
+
+            this.shadow,
 
             this.body,
 
             this.highlight,
 
-            this.cap
+            this.eyeLeft,
 
-        ];
+            this.eyeRight,
+
+            this.mouth,
+
+            this.cheekLeft,
+
+            this.cheekRight,
+
+            this.wordText
+
+        ]);
 
 
         // ========================================
-        // Animation ลอย
+        // ทำให้ตุ๊กตาลอยเบา ๆ
         // ========================================
 
-        this.tween = scene.tweens.add({
+        this.floatTween =
 
-            targets: this.parts,
+            scene.tweens.add({
 
-            y: "-=4",
+                targets:
 
-            duration: 800,
+                    this.container,
 
-            yoyo: true,
+                y:
 
-            repeat: -1,
+                    y - 5,
 
-            ease: "Sine.easeInOut",
+                duration:
 
-            delay: Phaser.Math.Between(
+                    900,
 
-                0,
+                yoyo:
 
-                500
+                    true,
 
-            )
+                repeat:
 
-        });
+                    -1,
+
+                ease:
+
+                    "Sine.easeInOut"
+
+            });
 
     }
 
 
     // ========================================
-    // ตรวจสอบตำแหน่ง
-    // ========================================
-
-    getDistanceFrom(
-        x,
-        y
-    ) {
-
-        return Phaser.Math.Distance.Between(
-
-            this.body.x,
-
-            this.body.y,
-
-            x,
-
-            y
-
-        );
-
-    }
-
-
-    // ========================================
-    // คีบแคปซูล
+    // เริ่มถูกคีบ
     // ========================================
 
     grab() {
 
+
         if (
-            this.isGrabbed
+
+            this.isGrabbed ||
+
+            this.isRemoved
+
         ) {
 
             return;
@@ -183,29 +380,66 @@ export default class Capsule {
         // หยุด Animation ลอย
 
         if (
-            this.tween
+
+            this.floatTween
+
         ) {
 
-            this.tween.pause();
+            this.floatTween.stop();
 
         }
 
 
-        // Animation ขยาย
+        // ========================================
+        // เอฟเฟกต์เด้ง
+        // ========================================
 
         this.scene.tweens.add({
 
-            targets: this.parts,
+            targets:
 
-            scaleX: 1.2,
+                this.container,
 
-            scaleY: 1.2,
+            scale:
 
-            duration: 200,
+                1.25,
 
-            yoyo: true,
+            duration:
 
-            ease: "Back.easeOut"
+                200,
+
+            yoyo:
+
+                true,
+
+            repeat:
+
+                1
+
+        });
+
+
+        // ========================================
+        // หมุนเล็กน้อย
+        // ========================================
+
+        this.scene.tweens.add({
+
+            targets:
+
+                this.container,
+
+            angle:
+
+                360,
+
+            duration:
+
+                700,
+
+            ease:
+
+                "Cubic.easeInOut"
 
         });
 
@@ -213,131 +447,186 @@ export default class Capsule {
 
 
     // ========================================
-    // แสดงคำศัพท์
+    // เอฟเฟกต์ถูกต้อง
     // ========================================
 
-    showWord() {
+    successEffect() {
 
-        if (
-            !this.wordData
+
+        // ========================================
+        // ดาวกระจาย
+        // ========================================
+
+        for (
+
+            let i = 0;
+
+            i < 8;
+
+            i++
+
         ) {
 
-            return;
+
+            const angle =
+
+                Phaser.Math.DegToRad(
+
+                    i * 45
+
+                );
+
+
+            const star =
+
+                this.scene.add.text(
+
+                    this.container.x,
+
+                    this.container.y,
+
+                    "⭐",
+
+                    {
+
+                        fontSize: "24px"
+
+                    }
+
+                );
+
+
+            this.scene.tweens.add({
+
+                targets:
+
+                    star,
+
+
+                x:
+
+                    star.x +
+
+                    Math.cos(angle) *
+
+                    100,
+
+
+                y:
+
+                    star.y +
+
+                    Math.sin(angle) *
+
+                    100,
+
+
+                alpha:
+
+                    0,
+
+
+                scale:
+
+                    1.5,
+
+
+                duration:
+
+                    700,
+
+
+                ease:
+
+                    "Cubic.easeOut",
+
+
+                onComplete: () => {
+
+                    star.destroy();
+
+                }
+
+            });
 
         }
 
 
-        const panel = this.scene.add.rectangle(
+        // ========================================
+        // ขยายแล้วหาย
+        // ========================================
 
-            640,
+        this.scene.tweens.add({
 
-            400,
+            targets:
 
-            400,
+                this.container,
 
-            220,
+            scale:
 
-            0xFFFFFF,
+                1.5,
 
-            0.96
+            alpha:
 
-        );
+                0,
+
+            duration:
+
+                700,
+
+            ease:
+
+                "Back.easeIn",
+
+            onComplete: () => {
 
 
-        panel.setStrokeStyle(
-
-            6,
-
-            0x42A5F5
-
-        );
+                this.isRemoved = true;
 
 
-        const emoji = this.scene.add.text(
-
-            640,
-
-            350,
-
-            this.wordData.emoji,
-
-            {
-
-                fontSize: "60px"
+                this.container.destroy();
 
             }
 
-        ).setOrigin(0.5);
+        });
+
+    }
 
 
-        const word = this.scene.add.text(
+    // ========================================
+    // เอฟเฟกต์ตอบผิด
+    // ========================================
 
-            640,
-
-            430,
-
-            this.wordData.word,
-
-            {
-
-                fontSize: "56px",
-
-                fontFamily: "Arial",
-
-                fontStyle: "bold",
-
-                color: "#0D47A1"
-
-            }
-
-        ).setOrigin(0.5);
-
-
-        // ========================================
-        // Animation แสดงคำ
-        // ========================================
-
-        panel.setScale(0);
-
-        emoji.setScale(0);
-
-        word.setScale(0);
+    wrongEffect() {
 
 
         this.scene.tweens.add({
 
-            targets: [
+            targets:
 
-                panel,
+                this.container,
 
-                emoji,
+            x:
 
-                word
+                "+=10",
 
-            ],
+            duration:
 
-            scale: 1,
+                80,
 
-            duration: 500,
+            yoyo:
 
-            ease: "Back.easeOut"
+                true,
+
+            repeat:
+
+                5,
+
+            ease:
+
+                "Sine.easeInOut"
 
         });
-
-
-        // ========================================
-        // คืน Object
-        // ========================================
-
-        return {
-
-            panel,
-
-            emoji,
-
-            word
-
-        };
 
     }
 
