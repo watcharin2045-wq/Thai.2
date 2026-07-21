@@ -11,6 +11,8 @@ export default class Claw {
 
         this.isMoving = false;
 
+        this.targetCapsule = null;
+
 
         // ========================================
         // เชือก
@@ -79,12 +81,7 @@ export default class Claw {
 
         );
 
-
-        this.leftArm.setLineWidth(
-
-            8
-
-        );
+        this.leftArm.setLineWidth(8);
 
 
         // ========================================
@@ -109,12 +106,7 @@ export default class Claw {
 
         );
 
-
-        this.rightArm.setLineWidth(
-
-            8
-
-        );
+        this.rightArm.setLineWidth(8);
 
     }
 
@@ -123,8 +115,10 @@ export default class Claw {
     // คีบ
     // ========================================
 
-    grab(onComplete) {
-
+    grab(
+        capsules,
+        onComplete
+    ) {
 
         if (
             this.isMoving
@@ -139,7 +133,7 @@ export default class Claw {
 
 
         // ========================================
-        // ลง
+        // ลงไปหาแคปซูล
         // ========================================
 
         this.scene.tweens.add({
@@ -167,7 +161,33 @@ export default class Claw {
 
 
                 // ========================================
-                // หนีบแขน
+                // หาแคปซูลที่ใกล้ที่สุด
+                // ========================================
+
+                this.targetCapsule =
+
+                    this.findNearestCapsule(
+
+                        capsules
+
+                    );
+
+
+                // ========================================
+                // ถ้าเจอแคปซูล
+                // ========================================
+
+                if (
+                    this.targetCapsule
+                ) {
+
+                    this.targetCapsule.grab();
+
+                }
+
+
+                // ========================================
+                // ปิดแขน
                 // ========================================
 
                 this.closeClaw();
@@ -185,7 +205,7 @@ export default class Claw {
 
 
                         // ========================================
-                        // ยกกลับ
+                        // ยกขึ้น
                         // ========================================
 
                         this.scene.tweens.add({
@@ -218,18 +238,30 @@ export default class Claw {
                                 this.isMoving = false;
 
 
+                                // ========================================
+                                // ส่งแคปซูลกลับไป
+                                // ========================================
+
                                 if (
+
                                     onComplete
+
                                 ) {
 
-                                    onComplete();
+                                    onComplete(
+
+                                        this.targetCapsule
+
+                                    );
 
                                 }
+
+
+                                this.targetCapsule = null;
 
                             }
 
                         });
-
 
                     }
 
@@ -243,11 +275,88 @@ export default class Claw {
 
 
     // ========================================
-    // ปิดแขนคีบ
+    // หาแคปซูลที่ใกล้แขนที่สุด
+    // ========================================
+
+    findNearestCapsule(
+        capsules
+    ) {
+
+        let nearest = null;
+
+        let nearestDistance = Infinity;
+
+
+        capsules.forEach(
+
+            capsule => {
+
+
+                if (
+
+                    capsule.isGrabbed
+
+                ) {
+
+                    return;
+
+                }
+
+
+                const distance =
+
+                    capsule.getDistanceFrom(
+
+                        this.head.x,
+
+                        this.head.y + 220
+
+                    );
+
+
+                if (
+
+                    distance < nearestDistance
+
+                ) {
+
+                    nearestDistance = distance;
+
+                    nearest = capsule;
+
+                }
+
+
+            }
+
+        );
+
+
+        // ========================================
+        // ต้องอยู่ในระยะ 70
+        // ========================================
+
+        if (
+
+            nearestDistance <= 70
+
+        ) {
+
+            return nearest;
+
+        }
+
+
+        return null;
+
+    }
+
+
+    // ========================================
+    // ปิดแขน
     // ========================================
 
     closeClaw() {
-
 
         this.leftArm.setTo(
 
@@ -290,11 +399,10 @@ export default class Claw {
 
 
     // ========================================
-    // เปิดแขนคีบ
+    // เปิดแขน
     // ========================================
 
     openClaw() {
-
 
         this.leftArm.setTo(
 
