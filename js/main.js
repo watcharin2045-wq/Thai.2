@@ -10,8 +10,10 @@
 // ----------------------------------------
 
 import BootScene from "./scenes/BootScene.js";
-
 import PreloadScene from "./scenes/PreloadScene.js";
+import MenuScene from "./scenes/MenuScene.js";
+import GameScene from "./scenes/GameScene.js";
+import ResultScene from "./scenes/ResultScene.js";
 
 
 // ----------------------------------------
@@ -52,8 +54,11 @@ const config = {
     scene: [
 
         BootScene,
-
-        PreloadScene
+        PreloadScene,
+        MenuScene,
+        GameScene,
+        ResultScene
+]
 
     ]
 
