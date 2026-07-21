@@ -7,6 +7,12 @@ import Machine from "../objects/Machine.js";
 
 import Claw from "../objects/Claw.js";
 
+import Capsule from "../objects/Capsule.js";
+
+import words from "../data/words.js";
+
+import GameConfig from "../utils/GameConfig.js";
+
 
 export default class GameScene extends Phaser.Scene {
 
@@ -20,12 +26,15 @@ export default class GameScene extends Phaser.Scene {
     create() {
 
         // ========================================
-        // ตัวแปรเกม
+        // คะแนน
         // ========================================
 
         this.score = 0;
 
-        this.isPlaying = true;
+
+        // ========================================
+        // สถานะ
+        // ========================================
 
         this.isClawMoving = false;
 
@@ -35,7 +44,9 @@ export default class GameScene extends Phaser.Scene {
         // ========================================
 
         this.cameras.main.setBackgroundColor(
-            "#9EDFFF"
+
+            GameConfig.BACKGROUND_COLOR
+
         );
 
 
@@ -94,34 +105,52 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // สร้างตู้คีบ
+        // สร้างตู้
         // ========================================
 
         this.machine = new Machine(
+
             this
+
         );
 
 
         // ========================================
-        // สร้างแขนคีบ
+        // สร้างแขน
         // ========================================
 
         this.claw = new Claw(
+
             this
+
         );
 
 
         // ========================================
-        // คำศัพท์เป้าหมาย
+        // สร้างแคปซูล
         // ========================================
 
-        this.add.text(
+        this.createCapsules();
+
+
+        // ========================================
+        // สุ่มคำศัพท์
+        // ========================================
+
+        this.setNewWord();
+
+
+        // ========================================
+        // คำแนะนำ
+        // ========================================
+
+        this.instructionText = this.add.text(
 
             640,
 
             665,
 
-            "📖 คำที่ต้องอ่าน: ปลา",
+            "🎯 อ่านคำว่า: ปลา",
 
             {
 
@@ -139,32 +168,7 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // คำแนะนำ
-        // ========================================
-
-        this.add.text(
-
-            40,
-
-            680,
-
-            "กด SPACE เพื่อคีบ",
-
-            {
-
-                fontSize: "24px",
-
-                fontFamily: "Arial",
-
-                color: "#333333"
-
-            }
-
-        );
-
-
-        // ========================================
-        // ควบคุมด้วย SPACE
+        // ปุ่ม SPACE
         // ========================================
 
         this.input.keyboard.on(
@@ -181,7 +185,7 @@ export default class GameScene extends Phaser.Scene {
 
 
         // ========================================
-        // ควบคุมด้วยการคลิก
+        // คลิกหน้าจอ
         // ========================================
 
         this.input.on(
@@ -200,13 +204,159 @@ export default class GameScene extends Phaser.Scene {
 
 
     // ========================================
-    // เริ่มการคีบ
+    // สร้างแคปซูล
+    // ========================================
+
+    createCapsules() {
+
+        this.capsules = [];
+
+
+        const colors = [
+
+            0xFFCC33,
+
+            0xFF6699,
+
+            0x66CCFF,
+
+            0x66FF99,
+
+            0xCC99FF
+
+        ];
+
+
+        for (
+
+            let row = 0;
+
+            row < GameConfig.CAPSULE_ROWS;
+
+            row++
+
+        ) {
+
+
+            for (
+
+                let col = 0;
+
+                col < GameConfig.CAPSULE_COLS;
+
+                col++
+
+            ) {
+
+
+                const x =
+
+                    GameConfig.CAPSULE_START_X
+
+                    +
+
+                    col *
+
+                    GameConfig.CAPSULE_GAP_X;
+
+
+                const y =
+
+                    GameConfig.CAPSULE_START_Y
+
+                    +
+
+                    row *
+
+                    GameConfig.CAPSULE_GAP_Y;
+
+
+                const color =
+
+                    Phaser.Utils.Array.GetRandom(
+
+                        colors
+
+                    );
+
+
+                const wordData =
+
+                    Phaser.Utils.Array.GetRandom(
+
+                        words
+
+                    );
+
+
+                const capsule =
+
+                    new Capsule(
+
+                        this,
+
+                        x,
+
+                        y,
+
+                        color,
+
+                        wordData
+
+                    );
+
+
+                this.capsules.push(
+
+                    capsule
+
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // ========================================
+    // สุ่มคำใหม่
+    // ========================================
+
+    setNewWord() {
+
+        this.currentWord =
+
+            Phaser.Utils.Array.GetRandom(
+
+                words
+
+            );
+
+
+        this.instructionText.setText(
+
+            "🎯 อ่านคำว่า: "
+
+            +
+
+            this.currentWord.word
+
+        );
+
+    }
+
+
+    // ========================================
+    // เริ่มคีบ
     // ========================================
 
     startClaw() {
 
         if (
+
             this.isClawMoving
+
         ) {
 
             return;
@@ -219,67 +369,102 @@ export default class GameScene extends Phaser.Scene {
 
         this.claw.grab(
 
-            () => {
+            this.capsules,
+
+            (capsule) => {
+
+
+                // ========================================
+                // ถ้าคีบได้
+                // ========================================
+
+                if (
+
+                    capsule
+
+                ) {
+
+
+                    // ========================================
+                    // แสดงคำศัพท์
+                    // ========================================
+
+                    capsule.showWord();
+
+
+                    // ========================================
+                    // เพิ่มคะแนน
+                    // ========================================
+
+                    this.score++;
+
+
+                    this.scoreText.setText(
+
+                        "⭐ "
+
+                        +
+
+                        this.score
+
+                    );
+
+
+                    // ========================================
+                    // สุ่มคำใหม่
+                    // ========================================
+
+                    this.setNewWord();
+
+
+                    // ========================================
+                    // ตรวจสอบชนะ
+                    // ========================================
+
+                    if (
+
+                        this.score >=
+
+                        GameConfig.WIN_SCORE
+
+                    ) {
+
+
+                        this.time.delayedCall(
+
+                            1500,
+
+                            () => {
+
+
+                                this.scene.start(
+
+                                    "ResultScene",
+
+                                    {
+
+                                        score:
+
+                                            this.score
+
+                                    }
+
+                                );
+
+                            }
+
+                        );
+
+                    }
+
+                }
+
 
                 this.isClawMoving = false;
-
-                this.addScore();
 
             }
 
         );
-
-    }
-
-
-    // ========================================
-    // เพิ่มคะแนน
-    // ========================================
-
-    addScore() {
-
-        this.score += 1;
-
-
-        this.scoreText.setText(
-
-            "⭐ " + this.score
-
-        );
-
-
-        // ========================================
-        // ถ้าได้ 5 คะแนน
-        // จบเกม
-        // ========================================
-
-        if (
-            this.score >= 5
-        ) {
-
-            this.time.delayedCall(
-
-                800,
-
-                () => {
-
-                    this.scene.start(
-
-                        "ResultScene",
-
-                        {
-
-                            score: this.score
-
-                        }
-
-                    );
-
-                }
-
-            );
-
-        }
 
     }
 
