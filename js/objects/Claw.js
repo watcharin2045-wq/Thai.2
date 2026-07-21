@@ -1,7 +1,11 @@
 // ========================================
-// Claw
+// Claw.js
+// ระบบแขนคีบ
 // Thai Claw Game V4.0
 // ========================================
+
+import GameConfig from "../utils/GameConfig.js";
+
 
 export default class Claw {
 
@@ -9,22 +13,31 @@ export default class Claw {
 
         this.scene = scene;
 
+        // ตำแหน่งเริ่มต้น
+
+        this.x = GameConfig.CLAW_START_X;
+
+        this.y = GameConfig.CLAW_START_Y;
+
+
+        // สถานะ
+
         this.isMoving = false;
 
-        this.targetCapsule = null;
+        this.isDropping = false;
 
 
         // ========================================
-        // เชือก
+        // สร้างเชือก
         // ========================================
 
         this.rope = scene.add.rectangle(
 
-            640,
+            this.x,
 
-            160,
+            this.y + 60,
 
-            5,
+            6,
 
             120,
 
@@ -39,11 +52,11 @@ export default class Claw {
 
         this.head = scene.add.circle(
 
-            640,
+            this.x,
 
-            220,
+            this.y + 120,
 
-            22,
+            24,
 
             0xECEFF1
 
@@ -69,17 +82,18 @@ export default class Claw {
 
             0,
 
-            640,
+            this.x,
 
-            220,
+            this.y + 120,
 
-            615,
+            this.x - 28,
 
-            260,
+            this.y + 165,
 
             0x455A64
 
         );
+
 
         this.leftArm.setLineWidth(8);
 
@@ -94,34 +108,171 @@ export default class Claw {
 
             0,
 
-            640,
+            this.x,
 
-            220,
+            this.y + 120,
 
-            665,
+            this.x + 28,
 
-            260,
+            this.y + 165,
 
             0x455A64
 
         );
 
+
         this.rightArm.setLineWidth(8);
+
+
+        // ========================================
+        // ตำแหน่งทั้งหมด
+        // ========================================
+
+        this.parts = [
+
+            this.rope,
+
+            this.head,
+
+            this.leftArm,
+
+            this.rightArm
+
+        ];
 
     }
 
 
     // ========================================
-    // คีบ
+    // อัปเดตตำแหน่ง
+    // ========================================
+
+    update() {
+
+        if (
+
+            this.isMoving ||
+
+            this.isDropping
+
+        ) {
+
+            return;
+
+        }
+
+
+        const keyboard =
+
+            this.scene.input.keyboard;
+
+
+        // ================================
+        // เลื่อนไปซ้าย
+        // ================================
+
+        if (
+
+            keyboard.addKey(
+
+                Phaser.Input.Keyboard.KeyCodes.LEFT
+
+            ).isDown
+
+        ) {
+
+            this.moveHorizontal(
+
+                -GameConfig.CLAW_MOVE_SPEED
+
+            );
+
+        }
+
+
+        // ================================
+        // เลื่อนไปขวา
+        // ================================
+
+        if (
+
+            keyboard.addKey(
+
+                Phaser.Input.Keyboard.KeyCodes.RIGHT
+
+            ).isDown
+
+        ) {
+
+            this.moveHorizontal(
+
+                GameConfig.CLAW_MOVE_SPEED
+
+            );
+
+        }
+
+    }
+
+
+    // ========================================
+    // เลื่อนแขนซ้ายขวา
+    // ========================================
+
+    moveHorizontal(
+
+        amount
+
+    ) {
+
+        this.x += amount;
+
+
+        // จำกัดขอบเขต
+
+        this.x = Phaser.Math.Clamp(
+
+            this.x,
+
+            GameConfig.CLAW_MIN_X,
+
+            GameConfig.CLAW_MAX_X
+
+        );
+
+
+        // อัปเดตตำแหน่ง Object
+
+        this.rope.x = this.x;
+
+        this.head.x = this.x;
+
+
+        this.leftArm.x = this.x;
+
+        this.rightArm.x = this.x;
+
+    }
+
+
+    // ========================================
+    // เริ่มคีบ
     // ========================================
 
     grab(
+
         capsules,
-        onComplete
+
+        callback
+
     ) {
 
         if (
-            this.isMoving
+
+            this.isMoving ||
+
+            this.isDropping
+
         ) {
 
             return;
@@ -131,9 +282,24 @@ export default class Claw {
 
         this.isMoving = true;
 
+        this.isDropping = true;
+
 
         // ========================================
-        // ลงไปหาแคปซูล
+        // หาแคปซูลที่ตรงกับตำแหน่งแขน
+        // ========================================
+
+        const target =
+
+            this.findTarget(
+
+                capsules
+
+            );
+
+
+        // ========================================
+        // Animation ลง
         // ========================================
 
         this.scene.tweens.add({
@@ -150,51 +316,46 @@ export default class Claw {
 
             ],
 
-            y: "+=220",
+            y:
 
-            duration: 900,
+                "+=" +
 
-            ease: "Sine.easeInOut",
+                GameConfig.CLAW_DROP_DISTANCE,
+
+            duration:
+
+                GameConfig.CLAW_DROP_DURATION,
+
+            ease:
+
+                "Sine.easeInOut",
 
 
             onComplete: () => {
 
 
                 // ========================================
-                // หาแคปซูลที่ใกล้ที่สุด
-                // ========================================
-
-                this.targetCapsule =
-
-                    this.findNearestCapsule(
-
-                        capsules
-
-                    );
-
-
-                // ========================================
-                // ถ้าเจอแคปซูล
+                // ถ้าคีบได้
                 // ========================================
 
                 if (
-                    this.targetCapsule
+
+                    target
+
                 ) {
 
-                    this.targetCapsule.grab();
+                    target.grab();
 
                 }
 
 
-                // ========================================
                 // ปิดแขน
-                // ========================================
 
                 this.closeClaw();
 
 
                 // ========================================
-                // รอ
+                // รอเล็กน้อย
                 // ========================================
 
                 this.scene.time.delayedCall(
@@ -205,7 +366,7 @@ export default class Claw {
 
 
                         // ========================================
-                        // ยกขึ้น
+                        // ยกแขนขึ้น
                         // ========================================
 
                         this.scene.tweens.add({
@@ -222,11 +383,19 @@ export default class Claw {
 
                             ],
 
-                            y: "-=220",
+                            y:
 
-                            duration: 900,
+                                "-=" +
 
-                            ease: "Sine.easeInOut",
+                                GameConfig.CLAW_DROP_DISTANCE,
+
+                            duration:
+
+                                GameConfig.CLAW_UP_DURATION,
+
+                            ease:
+
+                                "Sine.easeInOut",
 
 
                             onComplete: () => {
@@ -237,27 +406,22 @@ export default class Claw {
 
                                 this.isMoving = false;
 
+                                this.isDropping = false;
 
-                                // ========================================
-                                // ส่งแคปซูลกลับไป
-                                // ========================================
 
                                 if (
 
-                                    onComplete
+                                    callback
 
                                 ) {
 
-                                    onComplete(
+                                    callback(
 
-                                        this.targetCapsule
+                                        target
 
                                     );
 
                                 }
-
-
-                                this.targetCapsule = null;
 
                             }
 
@@ -275,16 +439,18 @@ export default class Claw {
 
 
     // ========================================
-    // หาแคปซูลที่ใกล้แขนที่สุด
+    // หาแคปซูลเป้าหมาย
     // ========================================
 
-    findNearestCapsule(
+    findTarget(
+
         capsules
+
     ) {
 
-        let nearest = null;
+        let target = null;
 
-        let nearestDistance = Infinity;
+        let closestDistance = Infinity;
 
 
         capsules.forEach(
@@ -305,44 +471,45 @@ export default class Claw {
 
                 const distance =
 
-                    capsule.getDistanceFrom(
+                    Math.abs(
 
-                        this.head.x,
+                        capsule.body.x -
 
-                        this.head.y + 220
+                        this.x
 
                     );
 
 
                 if (
 
-                    distance < nearestDistance
+                    distance <
+
+                    closestDistance
 
                 ) {
 
-                    nearestDistance = distance;
+                    closestDistance =
 
-                    nearest = capsule;
+                        distance;
+
+                    target = capsule;
 
                 }
-
 
             }
 
         );
 
 
-        // ========================================
-        // ต้องอยู่ในระยะ 70
-        // ========================================
+        // ต้องอยู่ใกล้ไม่เกิน 35 px
 
         if (
 
-            nearestDistance <= 70
+            closestDistance <= 35
 
         ) {
 
-            return nearest;
+            return target;
 
         }
 
@@ -364,11 +531,11 @@ export default class Claw {
 
             0,
 
-            this.head.x,
+            this.x,
 
             this.head.y,
 
-            this.head.x - 12,
+            this.x - 12,
 
             this.head.y + 35,
 
@@ -383,11 +550,11 @@ export default class Claw {
 
             0,
 
-            this.head.x,
+            this.x,
 
             this.head.y,
 
-            this.head.x + 12,
+            this.x + 12,
 
             this.head.y + 35,
 
@@ -410,13 +577,13 @@ export default class Claw {
 
             0,
 
-            this.head.x,
+            this.x,
 
             this.head.y,
 
-            this.head.x - 25,
+            this.x - 28,
 
-            this.head.y + 40,
+            this.head.y + 45,
 
             0x455A64
 
@@ -429,13 +596,13 @@ export default class Claw {
 
             0,
 
-            this.head.x,
+            this.x,
 
             this.head.y,
 
-            this.head.x + 25,
+            this.x + 28,
 
-            this.head.y + 40,
+            this.head.y + 45,
 
             0x455A64
 
