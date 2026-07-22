@@ -27,7 +27,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
 
-    create() {
+    create(data) {
 
             // ========================================
             // รับหมวดคำศัพท์จาก MenuScene
